@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Account Listings</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #000;
+      color: white;
+      padding: 20px;
+    }
+
+    .search-bar {
+      width: 100%;
+      max-width: 500px;
+      margin: 0 auto 30px auto;
+      display: flex;
+      background: #1a1a1a;
+      border: 1px solid #444;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .search-bar input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      padding: 12px 15px;
+      color: white;
+      font-size: 16px;
+      outline: none;
+    }
+
+    .search-bar button {
+      background: #00c853;
+      border: none;
+      padding: 0 18px;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .account-frame {
+      max-width: 800px;
+      margin: 0 auto;
+      background: #1e1e1e;
+      border-radius: 10px;
+      padding: 10px 0;
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .account-row {
+      display: flex;
+      padding: 12px 20px;
+      border-bottom: 1px solid #333;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .account-row:hover {
+      background: #2a2a2a;
+    }
+
+    .account-row.header {
+      font-weight: bold;
+      background: #2b2b2b;
+      cursor: default;
+    }
+
+    .account-row div {
+      flex: 1;
+      text-align: left;
+      font-size: 15px;
+    }
+
+    .account-row div:first-child {
+      flex: 0.5;
+    }
+
+    .status {
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      display: inline-block;
+    }
+
+    .status.available {
+      background: #00c853;
+      color: white;
+    }
+
+    .status.sold {
+      background: #c70000;
+      color: white;
+    }
+
+    /* Popup Style */
+    .popup-overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .popup {
+      background: #1e1e1e;
+      padding: 20px 30px;
+      border-radius: 10px;
+      text-align: center;
+      max-width: 300px;
+      box-shadow: 0 0 10px black;
+    }
+
+    .popup h3 {
+      margin: 0 0 15px 0;
+      font-size: 18px;
+    }
+
+    .popup button {
+      margin: 10px 5px 0 5px;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .popup .yes-btn {
+      background: #00c853;
+      color: white;
+    }
+
+    .popup .no-btn {
+      background: #444;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Search bar -->
+  <div class="search-bar">
+    <input type="text" id="searchInput" placeholder="Search by code or username...">
+    <button onclick="searchAccounts()"><i class="fa fa-search"></i></button>
+  </div>
+
+  <!-- Account List Frame -->
+  <div class="account-frame" id="accountList">
+    <div class="account-row header">
+      <div>#</div>
+      <div>Code</div>
+      <div>Status</div>
+      <div>Username</div>
+    </div>
+    <!-- JS will insert rows -->
+  </div>
+
+  <!-- Popup -->
+  <div class="popup-overlay" id="popup">
+    <div class="popup">
+      <h3 id="popup-text">Are you sure?</h3>
+      <button class="yes-btn" onclick="proceedToPayment()">Yes</button>
+      <button class="no-btn" onclick="closePopup()">No</button>
+    </div>
+  </div>
+
+  <script>
+    let accounts = [];
+    let selectedCode = "";
+
+    async function loadAccountsFromJSON() {
+      try {
+        const response = await fetch('accounts.json');
+        accounts = await response.json();
+        loadAccounts(accounts);
+      } catch (err) {
+        console.error("Failed to load accounts:", err);
+        const container = document.getElementById('accountList');
+        container.innerHTML += `<div class="account-row"><div>Error loading data</div></div>`;
+      }
+    }
+
+    function loadAccounts(data) {
+      const container = document.getElementById('accountList');
+      container.innerHTML = `
+        <div class="account-row header">
+          <div>#</div>
+          <div>Code</div>
+          <div>Status</div>
+          <div>Username</div>
+        </div>
+      `;
+
+      if (data.length === 0) {
+        const noData = document.createElement("div");
+        noData.className = "account-row";
+        noData.innerHTML = `<div>No accounts found</div>`;
+        container.appendChild(noData);
+        return;
+      }
+
+      data.forEach((acc, index) => {
+        const row = document.createElement("div");
+        row.className = "account-row";
+        row.innerHTML = `
+          <div>${index + 1}</div>
+          <div>${acc.code}</div>
+          <div><span class="status ${acc.status}">${acc.status}</span></div>
+          <div>${acc.user}</div>
+        `;
+        if (acc.status === "available") {
+          row.onclick = () => confirmPurchase(acc.code);
+        } else {
+          row.style.opacity = "0.4";
+          row.style.cursor = "not-allowed";
+        }
+        container.appendChild(row);
+      });
+    }
+
+    function searchAccounts() {
+      const query = document.getElementById("searchInput").value.toLowerCase();
+      const filtered = accounts.filter(acc =>
+        acc.code.toLowerCase().includes(query) || acc.user.toLowerCase().includes(query)
+      );
+      loadAccounts(filtered);
+    }
+
+    function confirmPurchase(code) {
+      selectedCode = code;
+      document.getElementById("popup-text").textContent = `${code} - Are you sure you want to buy it?`;
+      document.getElementById("popup").style.display = "flex";
+    }
+
+    function closePopup() {
+      document.getElementById("popup").style.display = "none";
+      selectedCode = "";
+    }
+
+    function proceedToPayment() {
+      // Optional: pass code in query ?code=#A1234
+      window.location.href = "payment.html?code=" + encodeURIComponent(selectedCode);
+    }
+
+    loadAccountsFromJSON();
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,121 @@
+[
+  {
+    "code": "A1234",
+    "user": "legend_player01",
+    "pw": "securepass123",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "B5678",
+    "user": "sniper_king88",
+    "pw": "bulletstorm",
+    "status": "sold",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "C9012",
+    "user": "shadow_rogue",
+    "pw": "nightblade",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "D3456",
+    "user": "tank_master",
+    "pw": "armorup",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "E7890",
+    "user": "quickshot77",
+    "pw": "blitzfire",
+    "status": "sold",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "F1122",
+    "user": "silenthunter",
+    "pw": "predator123",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "G3344",
+    "user": "stormbringer",
+    "pw": "thunderstrike",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "H5566",
+    "user": "flame_dragon",
+    "pw": "firestorm22",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "I7788",
+    "user": "icewizard",
+    "pw": "frostbite88",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "J9900",
+    "user": "ironknight",
+    "pw": "metalcore77",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "K2233",
+    "user": "phoenix_rise",
+    "pw": "rebornfire",
+    "status": "sold",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "L4455",
+    "user": "speed_demon",
+    "pw": "velocity22",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "M6677",
+    "user": "darkarcher",
+    "pw": "arrowvoid",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "N8899",
+    "user": "blastforce",
+    "pw": "boomxplod",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "O1010",
+    "user": "stealthhawk",
+    "pw": "shadowzone",
+    "status": "available",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "P1212",
+    "user": "nightflash",
+    "pw": "blackspark",
+    "status": "sold",
+    "verifcode": "1234#"
+  },
+  {
+    "code": "Q1414",
+    "user": "venomx",
+    "pw": "toxicblade",
+    "status": "available",
+    "verifcode": "1234#"
+  }
+]

@@ -1,0 +1,130 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payment | SecureAccounts</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+  <style>
+    body {
+      background-color: #121212;
+      color: #fff;
+      font-family: 'Segoe UI', sans-serif;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }.payment-box {
+  background: #1e1e1e;
+  padding: 30px;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 420px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+h2 {
+  margin-top: 0;
+  color: #00c853;
+}
+
+.qr-frame img {
+  width: 200px;
+  border-radius: 10px;
+  margin: 20px 0;
+}
+
+.btn {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  font-size: 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn:disabled {
+  background-color: #555;
+  color: #999;
+}
+
+.btn-verify {
+  background-color: #00c853;
+  color: white;
+}
+
+.btn-back {
+  background-color: transparent;
+  color: #ccc;
+  text-decoration: underline;
+  border: none;
+}
+
+input {
+  width: 60%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background-color: #121212;
+  color: white;
+  margin-bottom: 10px;
+  font-size: 14px;
+}
+
+.account-info {
+  background: #2b2b2b;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: 15px;
+}
+
+  </style>
+</head>
+<body>
+  <div class="payment-box">
+    <h2><i class="fa-solid fa-receipt"></i> Payment</h2>
+    <p>Your Account Code: <strong id="accountCodeBox">#A1234</strong></p><div class="qr-frame">
+  <img src="https://i.postimg.cc/68TKxz89/1750212123926.jpg" alt="QR Code">
+</div>
+
+<button class="btn" disabled><i class="fa-solid fa-spinner"></i> Waiting for admin approval</button>
+<button class="btn btn-verify" onclick="showVerify()"><i class="fa-solid fa-money-bill-wave"></i> I already paid</button>
+
+<div id="verifySection" style="display:none;">
+  <input type="text" id="verifInput" placeholder="Enter Verification Code">
+  <button class="btn btn-verify" onclick="verifyCode()">Verify</button>
+  <div id="resultBox" class="account-info" style="display:none;"></div>
+</div>
+
+<button class="btn btn-back" onclick="window.location.href='index.html'"><i class="fa-solid fa-arrow-left"></i> Back to Home</button>
+
+  </div>  <script>
+    let selectedCode = localStorage.getItem("selectedCode") || "#A1234";
+    document.getElementById("accountCodeBox").textContent = selectedCode;
+
+    function showVerify() {
+      document.getElementById("verifySection").style.display = "block";
+    }
+
+    function verifyCode() {
+      const inputCode = document.getElementById("verifInput").value.trim();
+      fetch('accounts.json')
+        .then(res => res.json())
+        .then(data => {
+          const acc = data.find(a => a.code === selectedCode);
+          if (acc && acc.verifcode === inputCode) {
+            document.getElementById("resultBox").style.display = "block";
+            document.getElementById("resultBox").innerHTML = `
+              <p><i class="fa-solid fa-user"></i> Username: <strong>${acc.user}</strong></p>
+              <p><i class="fa-solid fa-key"></i> Password: <strong>${acc.pw}</strong></p>
+            `;
+            confetti();
+          } else {
+            alert("Invalid verification code.");
+          }
+        });
+    }
+  </script></body>
+</html>

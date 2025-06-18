@@ -1,0 +1,145 @@
+<!DOCTYPE html><html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel - SecureAccounts</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #1c1c1c;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h2 {
+      margin-bottom: 20px;
+    }
+    .account-list {
+      width: 100%;
+      max-width: 700px;
+    }
+    .account-item {
+      background: #2a2a2a;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .info {
+      flex-grow: 1;
+    }
+    .info strong {
+      display: block;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    .status-select {
+      padding: 5px;
+      border-radius: 4px;
+      background: #1c1c1c;
+      color: white;
+      border: 1px solid #444;
+    }
+    .copy-btn {
+      padding: 5px 8px;
+      background: #00c853;
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    .copy-btn:hover {
+      background: #00a744;
+    }
+    .back-btn {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #444;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .back-btn i {
+      margin-right: 6px;
+    }
+  </style>
+</head>
+<body>
+  <h2><i class="fa-solid fa-lock"></i> Admin Panel</h2>
+  <div class="account-list" id="accountList"></div>
+  <button onclick="window.location.href='index.html'" class="back-btn">
+    <i class="fa-solid fa-arrow-left"></i> Go to Main
+  </button>  <script>
+    let accounts = [];
+
+    function loadAccounts() {
+      fetch('accounts.json')
+        .then(res => res.json())
+        .then(data => {
+          accounts = data;
+          renderList();
+        });
+    }
+
+    function renderList() {
+      const container = document.getElementById('accountList');
+      container.innerHTML = '';
+
+      accounts.forEach((acc, index) => {
+        const item = document.createElement('div');
+        item.className = 'account-item';
+
+        const info = document.createElement('div');
+        info.className = 'info';
+        info.innerHTML = `
+          <strong>Code:</strong> ${acc.code}<br>
+          <strong>Verif Code:</strong> ${acc.verifcode}
+        `;
+
+        const actions = document.createElement('div');
+        actions.className = 'actions';
+
+        const select = document.createElement('select');
+        select.className = 'status-select';
+        select.innerHTML = `
+          <option value="available" ${acc.status === 'available' ? 'selected' : ''}>Available</option>
+          <option value="sold" ${acc.status === 'sold' ? 'selected' : ''}>Sold</option>
+        `;
+        select.addEventListener('change', () => {
+          accounts[index].status = select.value;
+          console.log(`Account ${acc.code} status changed to ${select.value}`);
+        });
+
+        const copyCode = document.createElement('button');
+        copyCode.className = 'copy-btn';
+        copyCode.textContent = 'Copy Code';
+        copyCode.onclick = () => navigator.clipboard.writeText(acc.code);
+
+        const copyVerif = document.createElement('button');
+        copyVerif.className = 'copy-btn';
+        copyVerif.textContent = 'Copy Verif';
+        copyVerif.onclick = () => navigator.clipboard.writeText(acc.verifcode);
+
+        actions.appendChild(select);
+        actions.appendChild(copyCode);
+        actions.appendChild(copyVerif);
+
+        item.appendChild(info);
+        item.appendChild(actions);
+
+        container.appendChild(item);
+      });
+    }
+
+    loadAccounts();
+  </script></body>
+</html>

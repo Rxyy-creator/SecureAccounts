@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SecureAccounts</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #121212;
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      width: 100%;
+      max-width: 420px;
+      padding: 20px;
+      background-color: #1e1e1e;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 0 12px rgba(0,0,0,0.3);
+    }
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+    .header i { color: #00c853; }
+    .header h2 {
+      margin: 0;
+      font-size: 22px;
+    }
+    .subtitle {
+      font-size: 13px;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+    .steps {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 30px;
+    }
+    .step {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #333;
+      color: #888;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .step.active {
+      background: #00c853;
+      color: #fff;
+    }
+    .key-icon {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: #121212;
+      border: 2px solid #00c853;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 25px auto;
+    }
+    .key-icon i {
+      color: #00c853;
+      font-size: 20px;
+    }
+    h3 {
+      margin-bottom: 5px;
+      font-size: 20px;
+    }
+    p.description {
+      font-size: 14px;
+      color: #aaa;
+      margin-bottom: 25px;
+    }
+    .input-label {
+      text-align: left;
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      background-color: #121212;
+      border: 1px solid #444;
+      color: white;
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #00c853;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+    button:hover { background: #00b84d; }
+    .note {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #aaa;
+    }
+    .admin-link {
+      margin-top: 15px;
+      font-size: 13px;
+      color: #aaa;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <i class="fa-solid fa-shield-halved"></i>
+      <h2>SecureAccounts</h2>
+    </div>
+    <div class="subtitle">Secure Marketplace</div>
+
+    <div class="steps">
+      <div class="step active">1</div>
+      <div class="step">2</div>
+      <div class="step">3</div>
+      <div class="step">4</div>
+      <div class="step">5</div>
+    </div>
+
+    <div class="key-icon">
+      <i class="fa-solid fa-key"></i>
+    </div>
+
+    <h3>Enter Account Code</h3>
+    <p class="description">Please enter the unique code for the account you wish to purchase</p>
+
+    <div class="input-label">Account Code</div>
+    <input type="text" id="accountCode" placeholder="XXXXX" />
+
+    <button id="findBtn">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      Find Account
+    </button>
+
+    <div class="note">
+      Account codes are provided by our sellers and are unique to each account
+    </div>
+
+    <div class="admin-link" id="adminBtn">Admin Panel</div>
+  </div>
+
+  <script>
+    const input = document.getElementById('accountCode');
+    const button = document.getElementById('findBtn');
+    const originalBtnHTML = button.innerHTML;
+
+    button.addEventListener('click', () => {
+      const code = input.value.trim();
+      if (!code) return;
+
+      // Loading state
+      button.disabled = true;
+      button.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Loading...`;
+
+      fetch('accounts.json')
+        .then(res => res.json())
+        .then(data => {
+          const found = data.find(acc => acc.code.toLowerCase() === code.toLowerCase());
+          if (found) {
+            window.location.href = 'main.html';
+          } else {
+            alert('Account code does not exist.');
+            button.disabled = false;
+            button.innerHTML = originalBtnHTML;
+          }
+        })
+        .catch(err => {
+          alert("Error loading database.");
+          button.disabled = false;
+          button.innerHTML = originalBtnHTML;
+        });
+    });
+
+    document.getElementById("adminBtn").addEventListener("click", () => {
+      const password = prompt("Enter admin password:");
+      if (password === "rxyturu123") {
+        window.location.href = "admin.html";
+      } else if (password !== null) {
+        alert("Incorrect password.");
+      }
+    });
+  </script>
+</body>
+</html>
